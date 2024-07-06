@@ -6,6 +6,24 @@ from pyboxen import boxen
 console = Console()
 
 
+output = """
+We may have an API request that gives field names that are in no particular case format.
+We need to create aliases to correspond with this and then create serialization aliases.
+"""
+
+print("\n")
+print(
+    boxen(
+        output,
+        title="Unclean API to Python fields and out as JSON",
+        subtitle="Template to convert API to Python",
+        subtitle_alignment="center",
+        color="yellow",
+        padding=1,
+    )
+)
+
+
 class Person(BaseModel):
     model_config = ConfigDict(
         alias_generator=to_camel, populate_by_name=True, extra="forbid"
