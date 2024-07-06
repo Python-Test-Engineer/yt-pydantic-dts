@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 from rich.console import Console
+from pyboxen import boxen
 
 console = Console()
 
@@ -18,6 +19,17 @@ class Person(BaseModel):
     age: int | None = None  # Nullable and Optional as value has
 
 
+output = "Content goes here"
+print(
+    boxen(
+        output,
+        title="Pydantic, [black on cyan] Fields [/]",
+        subtitle="Cool subtitle goes here",
+        subtitle_alignment="center",
+        color="yellow",
+        padding=1,
+    )
+)
 p = Person(id=2, first_name="Isaac", lastName="Newton", age=84)
 console.print(p)
 
