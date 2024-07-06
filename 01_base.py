@@ -16,7 +16,7 @@ print(
     boxen(
         output,
         title="Unclean API to Python fields and out as JSON",
-        subtitle="Template to convert API to Python",
+        # subtitle="-",
         subtitle_alignment="center",
         color="yellow",
         padding=1,
