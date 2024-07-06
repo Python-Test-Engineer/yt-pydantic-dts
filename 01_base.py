@@ -19,7 +19,12 @@ class Person(BaseModel):
     age: int | None = None  # Nullable and Optional as value has
 
 
+p = Person(id=2, first_name="Isaac", lastName="Newton", age=84)
+
+
 output = "Content goes here"
+output += f"\n{p}"
+print("\n")
 print(
     boxen(
         output,
@@ -30,8 +35,8 @@ print(
         padding=1,
     )
 )
-p = Person(id=2, first_name="Isaac", lastName="Newton", age=84)
-console.print(p)
+console.print(f"{p}\n")
+
 
 data_json = """
 {
@@ -43,6 +48,7 @@ data_json = """
 """
 
 p = Person.model_validate_json(data_json)
+
 console.print(p)
 
 console.print(p.model_dump())
