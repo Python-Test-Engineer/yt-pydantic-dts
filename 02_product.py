@@ -69,6 +69,8 @@ class Product(BaseModel):
     code: str | None = None
     country_of_origin: str | None = None
 
+    # various options for 'when'
+    # https://docs.pydantic.dev/latest/api/pydantic_core_schema/#pydantic_core.core_schema.WhenUsed
     @field_serializer("manufactured_date", when_used="json-unless-none")
     def serialize_date(self, value: date) -> str:
         return value.strftime("%Y/%m/%d")
