@@ -10,8 +10,9 @@ from pyboxen import boxen
 console = Console()
 
 output = """
-We may have an API request that gives field names that are in no particular case format.
-We need to create aliases to correspond with this and then create serialization aliases.
+A Prodcut class with nested Enum class.
+We have set model level alias to camel case. and feilds are overwritten.
+As we are using alias in the ConfigDict, we use validation_alias for input aliases on fields and we also use serialization aliases for output.
 """
 print("\n")
 print(
@@ -49,13 +50,13 @@ data_json = """
 # valid JSON does not allow trailing comma
 
 
-class Automobile(BaseModel):
+class Product(BaseModel):
     model_config = ConfigDict(
-        extra="allow",
+        alias_generator=to_camel,  # camel case for
+        populate_by_name=True,  # allow pythonic field names as input
         str_strip_whitespace=True,
-        validate_default=True,
-        validate_assignment=True,
-        alias_generator=to_camel,
+        validate_default=True,  # our defaults are not validated by default
+        validate_assignment=True,  # assignments are not validated by default
     )
     product_id: str | int | None = None
     product_type: ProductType = Field(alias="type")
@@ -73,12 +74,14 @@ class Automobile(BaseModel):
         return value.strftime("%Y/%m/%d")
 
 
-car = Automobile.model_validate_json(data_json)
-console.print("\n[green]Python Object[/green]:")
-console.print(car)
+product = Product.model_validate_json(data_json)
+console.print("\n[green]Python Object[/green]:\n")
+console.print(product)
 console.print("\n[blue]model_dump[/blue]:\n")
-console.print(car.model_dump())
+console.print(product.model_dump())
 console.print("\n[yellow]model_dump alias=True[/]:\n")
-console.print(car.model_dump(by_alias=True))
+console.print(product.model_dump(by_alias=True))
 console.print("\n[cyan]model_dump_json alias=True[/]:\n")
-console.print(car.model_dump_json(by_alias=True))
+console.print(product.model_dump_json(by_alias=True))
+
+print("\n\n\n")
