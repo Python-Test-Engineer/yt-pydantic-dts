@@ -1,56 +1,76 @@
-import uuid
-from datetime import date
-from pydantic import (
-    AfterValidator,
-    BaseModel,
-    BeforeValidator,
-    PlainValidator,
-    ValidationInfo,
-    ValidatorFunctionWrapHandler,
-    WrapValidator,
-    EmailStr,
-    validator,
-)
-from pydantic.functional_validators import field_validator
+from pydantic import BaseModel, ConfigDict, Field
+from pydantic.alias_generators import to_camel
 from rich.console import Console
-import pyboxen
-
+from pyboxen import boxen
 
 console = Console()
 
 
-class User(BaseModel):
-    user_id: uuid.UUID = uuid.uuid4()
-    first_name: str
-    last_name: str
-    birthdate: date
-    email: EmailStr
-    address_1: str
-    address_2: str | None = None
-    city: str
-    state: str | None = None
-    postcode: str
+output = """
+We may have an API request that gives field names that are in no particular case format.
+We need to create aliases to correspond with this and then create serialization aliases.
+"""
 
-
-@field_validator("first_name", "last_name")
-def validate_name(cls, first, last):
-    if len(first) < 3:
-        raise ValueError("First name must be at least 3 characters.")
-    if len(last) < 3:
-        raise ValueError("Last name must be at least 3 characters.")
-    return first, last
-
-
-user = User(
-    first_name="",
-    last_name="Doe",
-    birthdate=date(1990, 1, 1),
-    email="john.doe@example.com",
-    address_1="123 Main St",
-    city="New York",
-    postcode="10001",
+print("\n")
+print(
+    boxen(
+        output,
+        title="Unclean API to Python fields and out as JSON",
+        # subtitle="-",
+        subtitle_alignment="center",
+        color="yellow",
+        padding=1,
+    )
 )
 
-user = User.model_validate(user)
 
-console.print(user)
+class Person(BaseModel):
+    model_config = ConfigDict(
+        alias_generator=to_camel, populate_by_name=True, extra="forbid"
+    )
+
+    id_: int = Field(
+        alias="id", default=1
+    )  # Non-nulable but optional as value has default
+    first_name: str | None = None  # Nullable and Optional as value has default
+    last_name: str  # Required and non-nullable - must be str
+    age: int | None = None  # Nullable and Optional as value has
+
+
+p = Person(id=2, first_name="Isaac", lastName="Newton", age=84)
+
+
+output = "Content goes here"
+output += f"\n{p}"
+print("\n")
+print(
+    boxen(
+        output,
+        title="Pydantic, [black on cyan] Fields [/]",
+        subtitle="Cool subtitle goes here",
+        subtitle_alignment="center",
+        color="yellow",
+        padding=1,
+    )
+)
+console.print(f"{p}\n")
+
+
+data_json = """
+{
+    "id": 3,
+    "firstName": "Isaac",
+    "last_name": "Newton",
+    "age": 84
+}
+"""
+
+p = Person.model_validate_json(data_json)
+
+console.print(p)
+
+console.print(p.model_dump())
+
+console.print(p.model_dump(by_alias=True))
+
+console.print(p.model_dump_json(by_alias=True))
