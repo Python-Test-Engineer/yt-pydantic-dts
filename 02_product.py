@@ -66,7 +66,7 @@ class Product(BaseModel):
         validation_alias="msrpUSD", serialization_alias="baseMSRPUSD"
     )
     number_of_components: int = Field(default=4, validation_alias="doors")
-    code: str | None = None
+    code: str | None  # nullable but required
     country_of_origin: str | None = None
 
     # various options for 'when'
