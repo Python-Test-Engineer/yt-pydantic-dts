@@ -27,63 +27,26 @@ print(
 
 
 class ProductType(Enum):
-    sedan = "Sedan"
-    coupe = "Coupe"
+    SOFTWARE = "software"
+    ACCESSORIES = "accessories"
     HARDWARE = "hardware"
-    suv = "SUV"
-    truck = "Truck"
+    COURSES = "courses"
 
 
 data_json = """
 {
-    "manufacturer": "BMW",
-    "seriesName": "M4",
+    "product_id": "1234567890",
     "type": "hardware",
-    "isElectric": false,
+    "isReturnable": false,
     "completionDate": "2023-01-01",
     "msrpUSD": 93300,
-    "vin": "1234567890",
-    "doors": 2,
-    "registrationCountry": "France",
-    "licensePlate": "AAA-BBB"
+    "manufacturer": "BMW",
+    "number_of_components": 4,
+    "code": "M4",
+    "country_of_origin": "France" 
 }
 """
-
-expected_serialized_dict = {
-    "manufacturer": "BMW",
-    "series_name": "M4",
-    "type_": ProductType.HARDWARE,
-    "is_electric": False,
-    "manufactured_date": date(2023, 1, 1),
-    "base_msrp_usd": 93300.0,
-    "vin": "1234567890",
-    "number_of_doors": 2,
-    "registration_country": "France",
-    "license_plate": "AAA-BBB",
-}
-
-
-expected_serialized_dict_by_alias = {
-    "product_id": 1234567890,
-    "manufacturer": "BMW",
-    "seriesName": "M4",
-    "type": ProductType.HARDWARE,
-    "isElectric": False,
-    "manufacturedDate": date(2023, 1, 1),
-    "baseMSRPUSD": 93300.0,
-    "vin": "1234567890",
-    "numberOfDoors": 2,
-    "registrationCountry": "France",
-    "licensePlate": "AAA-BBB",
-}
-
-
-expected_serialized_json_by_alias = (
-    '{"manufacturer":"BMW","seriesName":"M4","type":"hardware",'
-    '"isElectric":false,"manufacturedDate":"2023/01/01","baseMSRPUSD":93300.0,'
-    '"vin":"1234567890","numberOfDoors":2,"registrationCountry":"France",'
-    '"licensePlate":"AAA-BBB"}'
-)
+# valid JSON does not allow trailing comma
 
 
 class Automobile(BaseModel):
@@ -95,15 +58,15 @@ class Automobile(BaseModel):
         alias_generator=to_camel,
     )
     product_id: str | int | None = None
-    manufacturer: str
-    series_name: str
     product_type: ProductType = Field(alias="type")
-    is_electric: bool = False
+    is_returnable: bool = False
     manufactured_date: date = Field(validation_alias="completionDate")
     base_msrp_usd: float = Field(
         validation_alias="msrpUSD", serialization_alias="baseMSRPUSD"
     )
-    number_of_doors: int = Field(default=4, validation_alias="doors")
+    number_of_components: int = Field(default=4, validation_alias="doors")
+    code: str | None = None
+    country_of_origin: str | None = None
 
     @field_serializer("manufactured_date", when_used="json-unless-none")
     def serialize_date(self, value: date) -> str:
@@ -111,7 +74,11 @@ class Automobile(BaseModel):
 
 
 car = Automobile.model_validate_json(data_json)
+console.print("\n[green]Python Object[/green]:")
 console.print(car)
+console.print("\n[blue]model_dump[/blue]:\n")
 console.print(car.model_dump())
+console.print("\n[yellow]model_dump alias=True[/]:\n")
 console.print(car.model_dump(by_alias=True))
+console.print("\n[cyan]model_dump_json alias=True[/]:\n")
 console.print(car.model_dump_json(by_alias=True))
