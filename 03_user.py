@@ -1,16 +1,17 @@
-from pydantic import Field, field_serializer
+from uuid import uuid4
+from pydantic import Field, field_serializer, UUID4, PastDate
 from pydantic.alias_generators import to_camel
-
 from datetime import date
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
 from rich.console import Console
 from pyboxen import boxen
 
+# https://docs.pydantic.dev/latest/api/types/
 console = Console()
 
 output = """
-A Product class with nested Enum class.
+A Prodcut class with nested Enum class.
 We have set model level alias to camel case. and feilds are overwritten.
 As we are using alias in the ConfigDict, we use validation_alias for input aliases on fields and we also use serialization aliases for output.
 """
@@ -26,64 +27,46 @@ print(
     )
 )
 
-
-class ProductType(Enum):
-    SOFTWARE = "software"
-    ACCESSORIES = "accessories"
-    HARDWARE = "hardware"
-    COURSES = "courses"
-
-
+user_id = uuid4()
 data_json = """
 {
-    "product_id": "1234567890",
-    "type": "hardware",
-    "isReturnable": false,
-    "completionDate": "2023-01-01",
-    "msrpUSD": 93300,
-    "manufacturer": "BMW",
-    "number_of_components": 4,
-    "code": "M4",
-    "country_of_origin": "France" 
+    "email": "jane.doe@example.com",
+    "date_of_birth": "2000-01-01"
 }
 """
 # valid JSON does not allow trailing comma
 
 
-class Product(BaseModel):
+class User(BaseModel):
     model_config = ConfigDict(
         alias_generator=to_camel,  # camel case for
         populate_by_name=True,  # allow pythonic field names as input
         str_strip_whitespace=True,
         validate_default=True,  # our defaults are not validated by default
         validate_assignment=True,  # assignments are not validated by default
+        extra="allow",
     )
-    product_id: str | int | None = None
-    product_type: ProductType = Field(alias="type")
-    is_returnable: bool = False
-    manufactured_date: date = Field(validation_alias="completionDate")
-    base_msrp_usd: float = Field(
-        validation_alias="msrpUSD", serialization_alias="baseMSRPUSD"
-    )
-    number_of_components: int = Field(default=4, validation_alias="doors")
-    code: str | None  # nullable but required
-    country_of_origin: str | None = None
+    user_id: UUID4 = Field(
+        alias="id", default_factory=uuid4
+    )  # fields created at compile time so will always reference just one 'instance'
+    email: str
+    # date_of_birth: date = Field(
+    #     alias="dateOfBirth",
+    #     default_factory=date.fromisoformat,
+    # )
 
     # various options for 'when'
     # https://docs.pydantic.dev/latest/api/pydantic_core_schema/#pydantic_core.core_schema.WhenUsed
-    @field_serializer("manufactured_date", when_used="json-unless-none")
-    def serialize_date(self, value: date) -> str:
-        return value.strftime("%Y/%m/%d")
 
 
-product = Product.model_validate_json(data_json)
+user = User.model_validate_json(data_json)
 console.print("\n[green]Python Object[/green]:\n")
-console.print(product)
+console.print(user)
 console.print("\n[blue]model_dump[/blue]:\n")
-console.print(product.model_dump())
+console.print(user.model_dump())
 console.print("\n[yellow]model_dump alias=True[/]:\n")
-console.print(product.model_dump(by_alias=True))
+console.print(user.model_dump(by_alias=True))
 console.print("\n[cyan]model_dump_json alias=True[/]:\n")
-console.print(product.model_dump_json(by_alias=True))
+console.print(user.model_dump_json(by_alias=True))
 
 print("\n\n\n")
