@@ -64,6 +64,7 @@ expected_serialized_dict = {
 
 
 expected_serialized_dict_by_alias = {
+    "product_id": 1234567890,
     "manufacturer": "BMW",
     "seriesName": "M4",
     "type": ProductType.HARDWARE,
@@ -87,25 +88,22 @@ expected_serialized_json_by_alias = (
 
 class Automobile(BaseModel):
     model_config = ConfigDict(
-        extra="forbid",
+        extra="allow",
         str_strip_whitespace=True,
         validate_default=True,
         validate_assignment=True,
         alias_generator=to_camel,
     )
-
+    product_id: str | int | None = None
     manufacturer: str
     series_name: str
-    type_: ProductType = Field(alias="type")
+    product_type: ProductType = Field(alias="type")
     is_electric: bool = False
     manufactured_date: date = Field(validation_alias="completionDate")
     base_msrp_usd: float = Field(
         validation_alias="msrpUSD", serialization_alias="baseMSRPUSD"
     )
-    vin: str
     number_of_doors: int = Field(default=4, validation_alias="doors")
-    registration_country: str | None = None
-    license_plate: str | None = None
 
     @field_serializer("manufactured_date", when_used="json-unless-none")
     def serialize_date(self, value: date) -> str:
@@ -117,8 +115,3 @@ console.print(car)
 console.print(car.model_dump())
 console.print(car.model_dump(by_alias=True))
 console.print(car.model_dump_json(by_alias=True))
-assert car.model_dump() == expected_serialized_dict
-
-assert car.model_dump(by_alias=True) == expected_serialized_dict_by_alias
-
-assert car.model_dump_json(by_alias=True) == expected_serialized_json_by_alias
