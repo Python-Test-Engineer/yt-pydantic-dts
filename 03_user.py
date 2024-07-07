@@ -11,9 +11,8 @@ from pyboxen import boxen
 console = Console()
 
 output = """
-A Prodcut class with nested Enum class.
-We have set model level alias to camel case. and feilds are overwritten.
-As we are using alias in the ConfigDict, we use validation_alias for input aliases on fields and we also use serialization aliases for output.
+A User class with UUID type.
+When we use mutalbe dates or uuid in Model defintion, we need to use a factory instance as using regular pointer to data or uuid will create the value at compile time and will alwasy be the same.
 """
 print("\n")
 print(
@@ -27,10 +26,10 @@ print(
     )
 )
 
-user_id = uuid4()
 data_json = """
 {
-    "email": "jane.doe@example.com",
+    "user_id": "c0d4cbdf-60b6-4c82-8a2d-e340992f92a5",
+
     "date_of_birth": "2000-01-01"
 }
 """
@@ -46,17 +45,13 @@ class User(BaseModel):
         validate_assignment=True,  # assignments are not validated by default
         extra="allow",
     )
-    user_id: UUID4 = Field(
-        alias="id", default_factory=uuid4
-    )  # fields created at compile time so will always reference just one 'instance'
-    email: str
-    # date_of_birth: date = Field(
-    #     alias="dateOfBirth",
-    #     default_factory=date.fromisoformat,
-    # )
 
-    # various options for 'when'
-    # https://docs.pydantic.dev/latest/api/pydantic_core_schema/#pydantic_core.core_schema.WhenUsed
+    user_id: int | str | UUID4 = Field(alias="id", default_factory=uuid4)
+    date_of_birth: date = Field(
+        alias="dateOfBirth",
+        default_factory=date.fromisoformat,
+    )
+    email: str = "unkown@unknown.com"
 
 
 user = User.model_validate_json(data_json)
@@ -70,3 +65,6 @@ console.print("\n[cyan]model_dump_json alias=True[/]:\n")
 console.print(user.model_dump_json(by_alias=True))
 
 print("\n\n\n")
+
+u = User(date_of_birth="2000-01-01")
+console.print(u)
