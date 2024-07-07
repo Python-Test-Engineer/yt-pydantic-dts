@@ -26,10 +26,10 @@ print(
 )
 
 
-class AutomobileType(Enum):
+class ProductType(Enum):
     sedan = "Sedan"
     coupe = "Coupe"
-    convertible = "Convertible"
+    HARDWARE = "hardware"
     suv = "SUV"
     truck = "Truck"
 
@@ -38,7 +38,7 @@ data_json = """
 {
     "manufacturer": "BMW",
     "seriesName": "M4",
-    "type": "Convertible",
+    "type": "hardware",
     "isElectric": false,
     "completionDate": "2023-01-01",
     "msrpUSD": 93300,
@@ -52,7 +52,7 @@ data_json = """
 expected_serialized_dict = {
     "manufacturer": "BMW",
     "series_name": "M4",
-    "type_": AutomobileType.convertible,
+    "type_": ProductType.HARDWARE,
     "is_electric": False,
     "manufactured_date": date(2023, 1, 1),
     "base_msrp_usd": 93300.0,
@@ -66,7 +66,7 @@ expected_serialized_dict = {
 expected_serialized_dict_by_alias = {
     "manufacturer": "BMW",
     "seriesName": "M4",
-    "type": AutomobileType.convertible,
+    "type": ProductType.HARDWARE,
     "isElectric": False,
     "manufacturedDate": date(2023, 1, 1),
     "baseMSRPUSD": 93300.0,
@@ -78,7 +78,7 @@ expected_serialized_dict_by_alias = {
 
 
 expected_serialized_json_by_alias = (
-    '{"manufacturer":"BMW","seriesName":"M4","type":"Convertible",'
+    '{"manufacturer":"BMW","seriesName":"M4","type":"hardware",'
     '"isElectric":false,"manufacturedDate":"2023/01/01","baseMSRPUSD":93300.0,'
     '"vin":"1234567890","numberOfDoors":2,"registrationCountry":"France",'
     '"licensePlate":"AAA-BBB"}'
@@ -96,7 +96,7 @@ class Automobile(BaseModel):
 
     manufacturer: str
     series_name: str
-    type_: AutomobileType = Field(alias="type")
+    type_: ProductType = Field(alias="type")
     is_electric: bool = False
     manufactured_date: date = Field(validation_alias="completionDate")
     base_msrp_usd: float = Field(
