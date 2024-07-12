@@ -7,7 +7,9 @@ from pydantic import BaseModel, ConfigDict
 from rich.console import Console
 from pyboxen import boxen
 import requests
+from rich.traceback import install
 
+install(show_locals=True)
 # using the following api
 URL = "https://dummyjson.com/users/3"
 
@@ -32,7 +34,7 @@ user_dict = {
     "hair": {"color": "White", "type": "Wavy"},
     "ip": "214.225.51.195",
     "address": {
-        "address": "1642 Ninth Street",
+        "address": 6,
         "city": "Washington",
         "state": "Alabama",
         "stateCode": "AL",
