@@ -25,7 +25,7 @@ URL = "https://dummyjson.com/users/3"
 user_dict = {
     "id": 3,
     "firstName": "Sophia",
-    "lastName": "Brown",
+    "lastName": "Brown",  # errors for < 3, lower case firt letter and first letter c or C
     "maidenName": "",
     "age": 42,
     "gender": "female",
@@ -127,10 +127,10 @@ class User(BaseModel):
     @field_validator("last_name")
     @classmethod
     def after_validator_1(cls, value):
-        print("after_validator_1")
+        print("after_validator_1_nearest")
         if len(value) < 3:
             # we use ValueError to raise an exception and Pydantic will catch it
-            raise ValueError("last_name must be at least 3 characters")
+            raise ValueError("After Validator: last_name must be at least 3 characters")
         return value
 
     @field_validator("last_name")
@@ -145,10 +145,33 @@ class User(BaseModel):
     @field_validator("last_name")
     @classmethod
     def after_validator_3(cls, value):
-        print("after_validator_3")
+        print("after_validator_3_furthest_away")
         if value[0].lower() == "c":
             # we use ValueError to raise an exception and Pydantic will catch it
             raise ValueError("Last name must not start with c insensitive case")
+        return value
+
+    @field_validator("last_name", mode="before")
+    @classmethod
+    def before_validator_1(cls, value):
+        print("before_validator_1_nearest")
+        if len(value) < 3:
+            # we use ValueError to raise an exception and Pydantic will catch it
+            raise ValueError(
+                "Before Validator: last_name must be at least 3 characters"
+            )
+        return value
+
+    @field_validator("last_name", mode="before")
+    @classmethod
+    def before_validator_2(cls, value):
+        print("before_validator_2")
+        return value
+
+    @field_validator("last_name", mode="before")
+    @classmethod
+    def before_validator_3(cls, value):
+        print("before_validator_3_furthest_away")
         return value
 
 
