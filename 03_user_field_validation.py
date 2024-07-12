@@ -149,7 +149,8 @@ class User(BaseModel):
         if value[0].lower() == "c":
             # we use ValueError to raise an exception and Pydantic will catch it
             raise ValueError("Last name must not start with c insensitive case")
-        return value
+
+        return value.upper()
 
     @field_validator("last_name", mode="before")
     @classmethod
