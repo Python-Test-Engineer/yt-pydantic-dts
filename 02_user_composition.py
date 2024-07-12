@@ -9,6 +9,7 @@ from pyboxen import boxen
 import requests
 from rich.traceback import install
 
+# classes start LINE 110
 install(show_locals=True)
 # using the following api
 URL = "https://dummyjson.com/users/3"
