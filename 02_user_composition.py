@@ -34,7 +34,7 @@ user_dict = {
     "hair": {"color": "White", "type": "Wavy"},
     "ip": "214.225.51.195",
     "address": {
-        "address": 6,
+        "address": "1642 Ninth Street",
         "city": "Washington",
         "state": "Alabama",
         "stateCode": "AL",
