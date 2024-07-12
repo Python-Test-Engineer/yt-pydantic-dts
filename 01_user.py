@@ -112,7 +112,7 @@ class User(BaseModel):
     )
 
     user_id: int | str | UUID4 = Field(alias="id")
-    first_name: str
+    first_name: str | None = None # nullable as it has None and optional as a default is set.in
     last_name: str
     age: int
     email: str
