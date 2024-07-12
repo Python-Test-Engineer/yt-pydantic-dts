@@ -136,7 +136,7 @@ class User(BaseModel):
     last_name: str
     age: int
     email: str
-    Address: Address
+    address: Address
 
 
 user = User.model_validate(user_dict)

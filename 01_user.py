@@ -109,12 +109,13 @@ class User(BaseModel):
         validate_default=True,  # our defaults are not validated by default
         validate_assignment=True,  # assignments are not validated by default
         extra="ignore",  # ignore extra fields
+        # strict=True,  # applies strict or lax type coersion
     )
 
     user_id: int | str | UUID4 = Field(alias="id")
-    first_name: str | None = None # nullable as it has None and optional as a default is set.in
+    first_name: str | None = None
     last_name: str
-    age: int
+    age: int = "one"
     email: str
 
 
@@ -126,8 +127,10 @@ console.print(user.model_dump())
 console.print("\n[yellow]model_dump alias=True[/]:\n")
 console.print(user.model_dump(by_alias=True))
 console.print("\n[cyan]model_dump_json alias=True[/]:\n")
-console.print(user.model_dump_json(by_alias=True))
+console.print(user.model_dump_json(by_alias=True))  # default is pythonic names
 console.print("\n[purple4]model_dump_json alias=False[/]:\n")
 console.print(user.model_dump_json(by_alias=False))
+
+# user.last_name = 3
 
 print("\n")

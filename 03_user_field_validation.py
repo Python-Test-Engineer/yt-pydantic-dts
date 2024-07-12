@@ -27,7 +27,7 @@ user_dict = {
     "firstName": "Sophia",
     "lastName": "Brown",  # errors for < 3, lower case firt letter and first letter c or C
     "maidenName": "",
-    "age": 42,
+    "age": "42",
     "gender": "female",
     "email": "sophia.brown@x.dummyjson.com",
     "phone": "+81 210-652-2785",
