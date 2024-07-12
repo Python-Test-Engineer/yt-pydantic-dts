@@ -89,11 +89,7 @@ users = requests.get(URL).json()
 console.print(users)
 console.print(type(users))
 output = """
-We start simple with getting the id, first name, last name, age and email.
-Most fields will have an alias that camelCased() will correspond to the field name.
-However, we have a Python user_id that needs to match with id.
-To do this we use the field level alias.
-
+We can apply a range of before and after validators to a field. The ordering is specified in the case of multiple validators for a particular field.
 """
 print("\n")
 print(

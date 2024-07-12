@@ -82,11 +82,7 @@ users = requests.get(URL).json()
 console.print(users)
 console.print(type(users))
 output = """
-We start simple with getting the id, first name, last name, age and email.
-Most fields will have an alias that camelCased() will correspond to the field name.
-However, we have a Python user_id that needs to match with id.
-To do this we use the field level alias.
-
+Using nested models, composition, we can add validation to nested data.
 """
 print("\n")
 print(
