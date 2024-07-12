@@ -1,5 +1,5 @@
 from uuid import uuid4
-from pydantic import Field, field_serializer, UUID4, PastDate
+from pydantic import Field, field_serializer, UUID4, PastDate, ValidationError
 from pydantic.alias_generators import to_camel
 from datetime import date
 from enum import Enum

@@ -1,5 +1,12 @@
 from uuid import uuid4
-from pydantic import Field, field_serializer, UUID4, PastDate
+from pydantic import (
+    Field,
+    field_serializer,
+    UUID4,
+    PastDate,
+    field_validator,
+    ValidationError,
+)
 from pydantic.alias_generators import to_camel
 from datetime import date
 from enum import Enum
@@ -7,7 +14,10 @@ from pydantic import BaseModel, ConfigDict
 from rich.console import Console
 from pyboxen import boxen
 import requests
+from rich.traceback import install
 
+# classes start LINE 110
+install(show_locals=True)
 # using the following api
 URL = "https://dummyjson.com/users/3"
 
@@ -113,6 +123,33 @@ class User(BaseModel):
     last_name: str
     age: int
     email: str
+
+    @field_validator("last_name")
+    @classmethod
+    def after_validator_1(cls, value):
+        print("after_validator_1")
+        if len(value) < 3:
+            # we use ValueError to raise an exception and Pydantic will catch it
+            raise ValueError("last_name must be at least 3 characters")
+        return value
+
+    @field_validator("last_name")
+    @classmethod
+    def after_validator_2(cls, value):
+        print("after_validator_2")
+        if value[0] != value[0].upper():
+            # we use ValueError to raise an exception and Pydantic will catch it
+            raise ValueError("Last name must start with an uppercase letter")
+        return value
+
+    @field_validator("last_name")
+    @classmethod
+    def after_validator_3(cls, value):
+        print("after_validator_3")
+        if value[0].lower() == "c":
+            # we use ValueError to raise an exception and Pydantic will catch it
+            raise ValueError("Last name must not start with c insensitive case")
+        return value
 
 
 user = User.model_validate(user_dict)
