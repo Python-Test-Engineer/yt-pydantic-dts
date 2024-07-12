@@ -120,6 +120,7 @@ class User(BaseModel):
     age: int
     email: str
 
+    # we can add many fields to a given validator, so we could use @field_validator("last_name, "first_name") etc
     @field_validator("last_name")
     @classmethod
     def after_validator_1(cls, value):
